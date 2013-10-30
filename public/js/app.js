@@ -1,13 +1,15 @@
 
-// add js for game here
-
 $(function() {
-  var moves = ["circle","cross"]
   $(".cell").click(function(e) {
-    $(e.target).addClass("circle");
     $.get(e.srcElement.id, function(data) {
       console.log(data);
-      $("#"+data).addClass( "cross" );
+      if (data != 'illegal') {
+        $(e.target).addClass("circle");
+        $("#"+data).addClass( "cross" );
+      }
+      else {
+        alert("Illegal move!")
+      }
       //alert( "Load was performed." );
     });
   });

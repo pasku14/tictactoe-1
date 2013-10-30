@@ -13,15 +13,11 @@ class Board
   COLUMNS     = [ %w{a1 b1 c1},  %w{a2 b2 c2}, %w{a3 b3 c3} ]
   DIAGONALS   = [ %w{a1 b2 c3},  %w{a3 b2 c1} ]
   ROWS = HORIZONTALS + COLUMNS + DIAGONALS
+  MOVES       = %w{a1    a2   a3   b1   b2   b3   c1   c2   c3}
 
   def initialize(session) 
     @session = session
     @session["board"] = {}
-    @session['MOVES'] = %w{a1    a2   a3   b1   b2   b3   c1   c2   c3}
-  end
-
-  def moves
-    @session['MOVES']
   end
 
   def board
@@ -38,7 +34,7 @@ class Board
 
   def legal_moves
     m = []
-    moves.each do |key|
+    MOVES.each do |key|
       m << key unless @session["board"][key]
     end
     puts "legal_moves: Tablero:  #{board.inspect}"
@@ -57,12 +53,14 @@ class Board
 end
 
 get "/" do
+  puts Board::HORIZONTALS
   BOARD = Board.new(session)
   erb :game
 end
 
 get %r{/([abc][123])} do |human|
   puts "You played: #{human}!"
+  return "illegal" unless BOARD.legal_moves.include? human
   BOARD[human] = "O"
   computer = BOARD.legal_moves.sample
   redirect to('/') unless computer
