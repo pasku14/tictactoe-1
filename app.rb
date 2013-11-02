@@ -55,23 +55,22 @@ class Board
   end
 end
 
-get "/" do
-  puts Board::HORIZONTALS
-  $BOARD = Board.new(session)
-  erb :game, :locals => { :b => $BOARD }
-end
-
-CIRCLE = %q{<img src="images/circle.gif" />}
-CROSS  = %q{<img src="images/cross.gif"  />}
-get %r{/([abc][123])} do |human|
-  puts "You played: #{human}!"
-  if $BOARD.legal_moves.include? human
-    $BOARD[human] = CIRCLE
-    computer = $BOARD.legal_moves.sample
-    redirect to('/') unless computer
-    $BOARD[computer] = CROSS
-    puts "I played: #{computer}!"
-    puts "Tablero:  #{$BOARD.board.inspect}"
+CIRCLE = "circle"
+CROSS  = "cross"
+get %r{/([abc][123])?} do |human|
+  if human then
+    puts "You played: #{human}!"
+    if BOARD.legal_moves.include? human
+      BOARD[human] = CIRCLE
+      computer = BOARD.legal_moves.sample
+      redirect to('/') unless computer
+      BOARD[computer] = CROSS
+      puts "I played: #{computer}!"
+      puts "Tablero:  #{BOARD.board.inspect}"
+    end
+  else
+    puts Board::HORIZONTALS
+    BOARD = Board.new(session)
   end
-  erb :game, :locals => { :b => $BOARD }
+  erb :game, :locals => { :b => BOARD }
 end
