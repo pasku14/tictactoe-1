@@ -18,6 +18,9 @@ class Board
   def initialize(session) 
     @session = session
     @session["board"] = {}
+    MOVES.each do |k|
+      @session["board"][k] = ""
+    end
   end
 
   def board
@@ -35,7 +38,7 @@ class Board
   def legal_moves
     m = []
     MOVES.each do |key|
-      m << key unless @session["board"][key]
+      m << key unless @session["board"][key].length > 0
     end
     puts "legal_moves: Tablero:  #{board.inspect}"
     puts "legal_moves: m:  #{m}"
@@ -44,8 +47,8 @@ class Board
 
   def won?
     ROWS.each do |row|
-      return "X" if row.xs == 3 # "X" wins
-      return "O" if row.os == 3 # "O" wins
+      return "cross" if row.xs == 3 # "cross" wins
+      return "circle" if row.os == 3 # "circle" wins
     end
     return " " if blanks == 0   # tie
     false
@@ -54,18 +57,21 @@ end
 
 get "/" do
   puts Board::HORIZONTALS
-  BOARD = Board.new(session)
-  erb :game
+  $BOARD = Board.new(session)
+  erb :game, :locals => { :b => $BOARD }
 end
 
+CIRCLE = %q{<img src="images/circle.gif" />}
+CROSS  = %q{<img src="images/cross.gif"  />}
 get %r{/([abc][123])} do |human|
   puts "You played: #{human}!"
-  return "illegal" unless BOARD.legal_moves.include? human
-  BOARD[human] = "O"
-  computer = BOARD.legal_moves.sample
-  redirect to('/') unless computer
-  BOARD[computer] = "X"
-  puts "I played: #{computer}!"
-  puts "Tablero:  #{BOARD.board.inspect}"
-  computer
+  if $BOARD.legal_moves.include? human
+    $BOARD[human] = CIRCLE
+    computer = $BOARD.legal_moves.sample
+    redirect to('/') unless computer
+    $BOARD[computer] = CROSS
+    puts "I played: #{computer}!"
+    puts "Tablero:  #{$BOARD.board.inspect}"
+  end
+  erb :game, :locals => { :b => $BOARD }
 end
