@@ -8,9 +8,13 @@ set :session_secret, 'super secret'
 set :sessions, :domain => 'example.com'
 
 module TicTacToe
-  CIRCLE = "circle"
-  CROSS  = "cross"
+  HUMAN = CIRCLE = "circle" # human
+  COMPUTER = CROSS  = "cross"  # computer
   BLANK  = ""
+
+  def number_of(symbol, row)
+    row.find_all{ |s| self[s] == symbol }.size 
+  end
 end 
 
 class Board
@@ -42,6 +46,12 @@ include TicTacToe
     @session["board"][key] = value
   end
 
+  def each 
+    MOVES.each do |move|
+      yield move
+    end
+  end
+
   def legal_moves
     m = []
     MOVES.each do |key|
@@ -54,14 +64,54 @@ include TicTacToe
 
   def winner
     ROWS.each do |row|
-      circles = row.find_all{ |s| self[s] == CIRCLE  }.size 
+      circles = number_of(CIRCLE, row)  
       puts "winner: #{row.inspect} circles=#{circles}"
       return CIRCLE if circles == 3  # "circle" wins
-      crosses = row.find_all{ |s| self[s] == CROSS  }.size   
+      crosses = number_of(CROSS, row)   
       puts "winner: #{row.inspect} crosses=#{crosses}"
       return CROSS  if crosses == 3
     end
     false
+  end
+
+  def smart_move
+    moves = legal_moves
+
+    ROWS.each do |row|
+      if (number_of(BLANK, row) == 1) then
+        if (number_of(CROSS, row) == 2) then # If I have a win, take it.  
+          row.each do |e|
+            return e if self[e] == BLANK
+          end
+        end
+      end
+    end
+    ROWS.each do |row|
+      if (number_of(BLANK, row) == 1) then
+        if (number_of(CIRCLE,row) == 2) then # If he is threatening to win, stop it.
+          row.each do |e|
+            return e if self[e] == BLANK
+          end
+        end
+      end
+    end
+
+    # Take the center if open.
+    return "b2" if moves.include? "b2"
+
+#    # Defend opposite corners.
+    if    self["a1"] != COMPUTER and self["a1"] != BLANK and self["c3"] == BLANK
+      return "c3"
+    elsif self["c3"] != COMPUTER and self["c3"] != BLANK and self["a1"] == BLANK
+      return "a1"
+    elsif self["a3"] != COMPUTER and self["a3"] != BLANK and self["c1"] == BLANK
+      return "c1"
+    elsif self["c1"] != COMPUTER and self["c3"] != BLANK and self["a3"] == BLANK
+      return "a3"
+    end
+    
+#.   # Or make a random move.
+    moves[rand(moves.size)]
   end
 end
 
@@ -71,12 +121,14 @@ get %r{^/([abc][123])?$} do |human|
     puts "You played: #{human}!"
     if BOARD.legal_moves.include? human
       BOARD[human] = CIRCLE
-      computer = BOARD.legal_moves.sample
+      # computer = BOARD.legal_moves.sample
+      computer = BOARD.smart_move
       redirect to ('humanwins') if BOARD.winner == CIRCLE
       redirect to('/') unless computer
       BOARD[computer] = CROSS
       puts "I played: #{computer}!"
       puts "Tablero:  #{BOARD.board.inspect}"
+      redirect to ('computerwins') if BOARD.winner == CROSS
     end
   else
     puts Board::HORIZONTALS.inspect
@@ -87,6 +139,8 @@ end
 
 get '/humanwins' do
   erb :final, :locals => { :b => BOARD, :m => 'Human wins' }
-  #sleep(2)
-  #redirect to('/')
+end
+
+get '/computerwins' do
+  erb :final, :locals => { :b => BOARD, :m => 'Computer wins' }
 end
