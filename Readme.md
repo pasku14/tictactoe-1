@@ -1,8 +1,5 @@
-Building a simple Sinatra powered tic-tac-toe game as an example
-for teaching some friends.
-
-2 players
-Uses Sinatra
+Building a Simple Sinatra Tic-Tac-Toe game 
+==================================================
 
 App currently contains:
 

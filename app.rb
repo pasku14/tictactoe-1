@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'sinatra'
 
 settings.port = ENV['PORT'] || 4567
