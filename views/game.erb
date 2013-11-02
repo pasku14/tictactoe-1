@@ -1,17 +1,12 @@
 <div class="gameboard">
-  <div class="gamerow">
-    <a href="a1"><div class="cell <%= b["a1"] %>" id="a1"></div></a>
-    <a href="a2"><div class="cell <%= b["a2"] %>" id="a2"></div></a>
-    <a href="a3"><div class="cell <%= b["a3"] %>" id="a3"></div></a>
-  </div>
-  <div class="gamerow">
-    <a href="b1"><div class="cell <%= b["b1"] %>" id="b1"></div></a>
-    <a href="b2"><div class="cell <%= b["b2"] %>" id="b2"></div></a>
-    <a href="b3"><div class="cell <%= b["b3"] %>" id="b3"></div></a>
-  </div>
-  <div class="gamerow">
-    <a href="c1"><div class="cell <%= b["c1"] %>" id="c1"></div></a>
-    <a href="c2"><div class="cell <%= b["c2"] %>" id="c2"></div></a>
-    <a href="c3"><div class="cell <%= b["c3"] %>" id="c3"></div></a>
-  </div>
+  <% Board::HORIZONTALS.each do |row| %>
+    <div class="gamerow">
+      <% row.each do |p|%>
+        <a href="<%=p%>">
+          <div class="cell <%=b[p]%>" id="<%=p%>">
+          </div>
+        </a>
+      <% end %>
+    </div>
+  <% end %>
 </div>
