@@ -98,7 +98,7 @@ include TicTacToe
     # Take the center if open.
     return "b2" if moves.include? "b2"
 
-#    # Defend opposite corners.
+    # Defend opposite corners.
     if    self["a1"] != COMPUTER and self["a1"] != BLANK and self["c3"] == BLANK
       return "c3"
     elsif self["c3"] != COMPUTER and self["c3"] != BLANK and self["a1"] == BLANK
@@ -109,7 +109,7 @@ include TicTacToe
       return "a3"
     end
     
-#.   # Or make a random move.
+    # Or make a random move.
     moves[rand(moves.size)]
   end
 end
