@@ -57,7 +57,7 @@ end
 
 CIRCLE = "circle"
 CROSS  = "cross"
-get %r{/([abc][123])?} do |human|
+get %r{^/([abc][123])?$} do |human|
   if human then
     puts "You played: #{human}!"
     if BOARD.legal_moves.include? human
@@ -69,7 +69,7 @@ get %r{/([abc][123])?} do |human|
       puts "Tablero:  #{BOARD.board.inspect}"
     end
   else
-    puts Board::HORIZONTALS
+    puts Board::HORIZONTALS.inspect
     BOARD = Board.new(session)
   end
   erb :game, :locals => { :b => BOARD }
