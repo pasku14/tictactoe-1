@@ -133,13 +133,13 @@ get %r{^/([abc][123])?$} do |human|
     puts Board::HORIZONTALS.inspect
     BOARD = Board.new(session)
   end
-  erb :game, :locals => { :b => BOARD, :m => ''  }
+  haml :game, :locals => { :b => BOARD, :m => ''  }
 end
 
 get '/humanwins' do
-  erb :final, :locals => { :b => BOARD, :m => 'Human wins' }
+  haml :final, :locals => { :b => BOARD, :m => 'Human wins' }
 end
 
 get '/computerwins' do
-  erb :final, :locals => { :b => BOARD, :m => 'Computer wins' }
+  haml :final, :locals => { :b => BOARD, :m => 'Computer wins' }
 end
