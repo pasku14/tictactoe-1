@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sass'
 
 settings.port = ENV['PORT'] || 4567
 enable :sessions
@@ -142,4 +143,8 @@ end
 
 get '/computerwins' do
   haml :final, :locals => { :b => BOARD, :m => 'Computer wins' }
+end
+
+get '/styles.css' do
+  scss :styles
 end
