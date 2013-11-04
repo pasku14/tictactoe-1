@@ -145,7 +145,7 @@ get %r{^/([abc][123])?$} do |human|
       redirect to('/') unless computer
       BOARD[computer] = CROSS
       puts "I played: #{computer}!"
-      puts "Tablero:  #{BOARD.board.inspect}"
+      puts "Board:  #{BOARD.board.inspect}"
       redirect to ('computerwins') if BOARD.winner == CROSS
     end
   else
@@ -160,7 +160,7 @@ get '/humanwins' do
     m = if human_wins? then
           'Human wins'
         else 
-          ''
+          redirect '/'
         end
     haml :final, :locals => { :b => BOARD, :m => m }
   rescue
@@ -173,7 +173,7 @@ get '/computerwins' do
     m = if computer_wins? then
           'Computer wins'
         else 
-          ''
+          redirect '/'
         end
     haml :final, :locals => { :b => BOARD, :m => m }
   rescue
