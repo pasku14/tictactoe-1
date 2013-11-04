@@ -2,8 +2,9 @@ require 'sinatra'
 require 'sass'
 
 configure do
-  #settings.port = ENV['PORT'] || 4567
+  settings.port = ENV['PORT'] || 3333
   enable :sessions
+  #set :sessions, :domain => 'example.com'
   use Rack::Session::Pool, :expire_after => 2592000
   set :session_secret, ENV['SESSION_SECRET'] ||= 'super secret'
 end
@@ -82,10 +83,10 @@ include TicTacToe
   def winner
     ROWS.each do |row|
       circles = number_of(CIRCLE, row)  
-      puts "winner: #{row.inspect} circles=#{circles}"
+      #puts "winner: #{row.inspect} circles=#{circles}"
       return CIRCLE if circles == 3  # "circle" wins
       crosses = number_of(CROSS, row)   
-      puts "winner: #{row.inspect} crosses=#{crosses}"
+      #puts "winner: #{row.inspect} crosses=#{crosses}"
       return CROSS  if crosses == 3
     end
     false
