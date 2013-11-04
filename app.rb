@@ -5,7 +5,14 @@ settings.port = ENV['PORT'] || 4567
 enable :sessions
 use Rack::Session::Pool, :expire_after => 2592000
 set :session_secret, 'super secret'
-set :sessions, :domain => 'example.com'
+
+configure :development, :test do
+  set :sessions, :domain => 'example.com'
+end
+
+configure :production do
+  set :sessions, :domain => 'herokuapp.com'
+end
 
 module TicTacToe
   HUMAN = CIRCLE = "circle" # human
@@ -115,14 +122,18 @@ include TicTacToe
   end
 end
 
-include TicTacToe
-
 helpers do
-  def final_page(b, message)
-    haml :final, :locals => { :b => b, :m => message }
+
+  def human_wins?
+    BOARD.winner == HUMAN
+  end
+
+  def computer_wins?
+    BOARD.winner == COMPUTER
   end
 end
 
+include TicTacToe
 get %r{^/([abc][123])?$} do |human|
   if human then
     puts "You played: #{human}!"
@@ -146,7 +157,12 @@ end
 
 get '/humanwins' do
   begin
-    final(BOARD, 'Human wins')
+    m = if human_wins? then
+          'Human wins'
+        else 
+          ''
+        end
+    haml :final, :locals => { :b => BOARD, :m => m }
   rescue
     redirect '/'
   end
@@ -154,7 +170,12 @@ end
 
 get '/computerwins' do
   begin
-    final(BOARD, 'Computer wins')
+    m = if computer_wins? then
+          'Computer wins'
+        else 
+          ''
+        end
+    haml :final, :locals => { :b => BOARD, :m => m }
   rescue
     redirect '/'
   end
