@@ -1,10 +1,12 @@
 require 'sinatra'
 require 'sass'
 
-settings.port = ENV['PORT'] || 4567
-enable :sessions
-use Rack::Session::Pool, :expire_after => 2592000
-set :session_secret, 'super secret'
+configure do
+  settings.port = ENV['PORT'] || 4567
+  enable :sessions
+  use Rack::Session::Pool, :expire_after => 2592000
+  set :session_secret, 'super secret'
+end
 
 #configure :development, :test do
 #  set :sessions, :domain => 'example.com'
