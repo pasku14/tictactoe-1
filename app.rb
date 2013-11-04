@@ -6,13 +6,13 @@ enable :sessions
 use Rack::Session::Pool, :expire_after => 2592000
 set :session_secret, 'super secret'
 
-configure :development, :test do
-  set :sessions, :domain => 'example.com'
-end
-
-configure :production do
-  set :sessions, :domain => 'herokuapp.com'
-end
+#configure :development, :test do
+#  set :sessions, :domain => 'example.com'
+#end
+#
+#configure :production do
+#  set :sessions, :domain => 'herokuapp.com'
+#end
 
 module TicTacToe
   HUMAN = CIRCLE = "circle" # human
