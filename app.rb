@@ -42,7 +42,15 @@ include TicTacToe
   end
 
   def board
-    @session["board"]
+    Board.board = @session["board"] = Board.new(session) unless @session 
+  end
+
+  def self.board 
+    @board
+  end
+
+  def self.board=(val) 
+    @board = val
   end
 
   def [] key
@@ -125,11 +133,11 @@ end
 helpers do
 
   def human_wins?
-    BOARD.winner == HUMAN
+    Board.board.winner == HUMAN
   end
 
   def computer_wins?
-    BOARD.winner == COMPUTER
+    Board.board.winner == COMPUTER
   end
 end
 
@@ -137,22 +145,22 @@ include TicTacToe
 get %r{^/([abc][123])?$} do |human|
   if human then
     puts "You played: #{human}!"
-    if BOARD.legal_moves.include? human
-      BOARD[human] = CIRCLE
-      # computer = BOARD.legal_moves.sample
-      computer = BOARD.smart_move
-      redirect to ('humanwins') if BOARD.winner == CIRCLE
+    if Board.board.legal_moves.include? human
+      Board.board[human] = CIRCLE
+      # computer = Board.board.legal_moves.sample
+      computer = Board.board.smart_move
+      redirect to ('humanwins') if Board.board.winner == CIRCLE
       redirect to('/') unless computer
-      BOARD[computer] = CROSS
+      Board.board[computer] = CROSS
       puts "I played: #{computer}!"
-      puts "Board:  #{BOARD.board.inspect}"
-      redirect to ('computerwins') if BOARD.winner == CROSS
+      puts "Board:  #{Board.board.board.inspect}"
+      redirect to ('computerwins') if Board.board.winner == CROSS
     end
   else
     puts Board::HORIZONTALS.inspect
-    BOARD = Board.new(session)
+    Board.board = Board.new(session)
   end
-  haml :game, :locals => { :b => BOARD, :m => ''  }
+  haml :game, :locals => { :b => Board.board, :m => ''  }
 end
 
 get '/humanwins' do
@@ -162,7 +170,7 @@ get '/humanwins' do
         else 
           redirect '/'
         end
-    haml :final, :locals => { :b => BOARD, :m => m }
+    haml :final, :locals => { :b => Board.board, :m => m }
   rescue
     redirect '/'
   end
@@ -175,7 +183,7 @@ get '/computerwins' do
         else 
           redirect '/'
         end
-    haml :final, :locals => { :b => BOARD, :m => m }
+    haml :final, :locals => { :b => Board.board, :m => m }
   rescue
     redirect '/'
   end
