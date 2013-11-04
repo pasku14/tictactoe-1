@@ -116,6 +116,13 @@ include TicTacToe
 end
 
 include TicTacToe
+
+helpers do
+  def final_page(b, message)
+    haml :final, :locals => { :b => b, :m => message }
+  end
+end
+
 get %r{^/([abc][123])?$} do |human|
   if human then
     puts "You played: #{human}!"
@@ -138,11 +145,23 @@ get %r{^/([abc][123])?$} do |human|
 end
 
 get '/humanwins' do
-  haml :final, :locals => { :b => BOARD, :m => 'Human wins' }
+  begin
+    final(BOARD, 'Human wins')
+  rescue
+    redirect '/'
+  end
 end
 
 get '/computerwins' do
-  haml :final, :locals => { :b => BOARD, :m => 'Computer wins' }
+  begin
+    final(BOARD, 'Computer wins')
+  rescue
+    redirect '/'
+  end
+end
+
+not_found do
+  redirect '/'
 end
 
 get '/styles.css' do
