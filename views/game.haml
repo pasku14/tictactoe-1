@@ -1,9 +1,10 @@
-.gameboard
-  - Board::HORIZONTALS.each do |row| 
-    .gamerow
-      - row.each do |p|
-        %a(href=p)
-          %div{:id => "#{p}", :class => "cell #{b[p]}"}
-  .message
-    %h1= m
+.screen
+  .gameboard
+    - Board::HORIZONTALS.each do |row| 
+      .gamerow
+        - row.each do |p|
+          %a(href=p)
+            %div{:id => "#{p}", :class => "cell #{b[p]}"}
+    .message
+      %h1= m
 
