@@ -43,11 +43,11 @@ module TicTacToe
   end
 
   def [] key
-    session["bs"][key]
+    board[key]
   end
 
   def []= key, value
-    session["bs"][key] = value
+    board[key] = value
   end
 
   def each 
@@ -59,9 +59,9 @@ module TicTacToe
   def legal_moves
     m = []
     MOVES.each do |key|
-      m << key if session["bs"][key] == BLANK
+      m << key if board[key] == BLANK
     end
-    puts "legal_moves: Tablero:  #{session["bs"].inspect}"
+    puts "legal_moves: Tablero:  #{board.inspect}"
     puts "legal_moves: m:  #{m}"
     m # returns the set of feasible moves [ "b3", "c2", ... ]
   end
@@ -85,7 +85,7 @@ module TicTacToe
       if (number_of(BLANK, row) == 1) then
         if (number_of(CROSS, row) == 2) then # If I have a win, take it.  
           row.each do |e|
-            return e if session["bs"][e] == BLANK
+            return e if board[e] == BLANK
           end
         end
       end
@@ -94,7 +94,7 @@ module TicTacToe
       if (number_of(BLANK, row) == 1) then
         if (number_of(CIRCLE,row) == 2) then # If he is threatening to win, stop it.
           row.each do |e|
-            return e if session["bs"][e] == BLANK
+            return e if board[e] == BLANK
           end
         end
       end
@@ -135,12 +135,12 @@ get %r{^/([abc][123])?$} do |human|
     puts "session: "
     pp session
     if legal_moves.include? human
-      session["bs"][human] = TicTacToe::CIRCLE
-      # computer = session["bs"].legal_moves.sample
+      board[human] = TicTacToe::CIRCLE
+      # computer = board.legal_moves.sample
       computer = smart_move
       redirect to ('/humanwins') if human_wins?
       redirect to('/') unless computer
-      session["bs"][computer] = TicTacToe::CROSS
+      board[computer] = TicTacToe::CROSS
       puts "I played: #{computer}!"
       puts "Tablero:  #{board.inspect}"
       redirect to ('/computerwins') if computer_wins?
@@ -150,7 +150,7 @@ get %r{^/([abc][123])?$} do |human|
     puts "session = "
     pp session
   end
-  haml :game, :locals => { :b => session["bs"], :m => ''  }
+  haml :game, :locals => { :b => board, :m => ''  }
 end
 
 get '/humanwins' do
@@ -162,7 +162,7 @@ get '/humanwins' do
         else 
           redirect '/'
         end
-    haml :final, :locals => { :b => session["bs"], :m => m }
+    haml :final, :locals => { :b => board, :m => m }
   rescue
     redirect '/'
   end
@@ -177,7 +177,7 @@ get '/computerwins' do
         else 
           redirect '/'
         end
-    haml :final, :locals => { :b => session["bs"], :m => m }
+    haml :final, :locals => { :b => board, :m => m }
   rescue
     redirect '/'
   end
@@ -185,8 +185,8 @@ end
 
 not_found do
   puts "not found!!!!!!!!!!!"
-  session["bs"] = inicializa(session)
-  haml :game, :locals => { :b => session["bs"], :m => 'Let us start a new game'  }
+  session["bs"] = inicializa()
+  haml :game, :locals => { :b => board, :m => 'Let us start a new game'  }
 end
 
 get '/styles.css' do
