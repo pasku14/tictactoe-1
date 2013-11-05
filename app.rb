@@ -1,31 +1,24 @@
 require 'sinatra'
 require 'sass'
+require 'pp'
 
 settings.port = ENV['PORT'] || 4567
 enable :sessions
-use Rack::Session::Pool, :expire_after => 2592000
-set :session_secret, 'super secret'
+#use Rack::Session::Pool, :expire_after => 2592000
+#set :session_secret, 'super secret'
 
-#configure :development, :test do
-#  set :sessions, :domain => 'example.com'
-#end
-#
-#configure :production do
-#  set :sessions, :domain => 'herokuapp.com'
-#end
+configure :development, :test do
+  set :sessions, :domain => 'example.com'
+end
+
+configure :production do
+  set :sessions, :domain => 'herokuapp.com'
+end
 
 module TicTacToe
   HUMAN = CIRCLE = "circle" # human
   COMPUTER = CROSS  = "cross"  # computer
   BLANK  = ""
-
-  def number_of(symbol, row)
-    row.find_all{ |s| self[s] == symbol }.size 
-  end
-end 
-
-class Board
-include TicTacToe
 
   HORIZONTALS = [ %w{a1 a2 a3},  %w{b1 b2 b3}, %w{c1 c2 c3} ]
   COLUMNS     = [ %w{a1 b1 c1},  %w{a2 b2 c2}, %w{a3 b3 c3} ]
@@ -33,24 +26,28 @@ include TicTacToe
   ROWS = HORIZONTALS + COLUMNS + DIAGONALS
   MOVES       = %w{a1    a2   a3   b1   b2   b3   c1   c2   c3}
 
-  def initialize(session) 
-    @session = session
-    @session["board"] = {}
+  def number_of(symbol, row)
+    row.find_all{ |s| session["bs"][s] == symbol }.size 
+  end
+
+  def inicializa
+    @board = {}
     MOVES.each do |k|
-      @session["board"][k] = BLANK
+      @board[k] = BLANK
     end
+    @board
   end
 
   def board
-    @session["board"]
+    session["bs"]
   end
 
   def [] key
-    @session["board"][key]
+    session["bs"][key]
   end
 
   def []= key, value
-    @session["board"][key] = value
+    session["bs"][key] = value
   end
 
   def each 
@@ -62,9 +59,9 @@ include TicTacToe
   def legal_moves
     m = []
     MOVES.each do |key|
-      m << key if @session["board"][key] == BLANK
+      m << key if session["bs"][key] == BLANK
     end
-    puts "legal_moves: Tablero:  #{board.inspect}"
+    puts "legal_moves: Tablero:  #{session["bs"].inspect}"
     puts "legal_moves: m:  #{m}"
     m # returns the set of feasible moves [ "b3", "c2", ... ]
   end
@@ -72,10 +69,10 @@ include TicTacToe
   def winner
     ROWS.each do |row|
       circles = number_of(CIRCLE, row)  
-      puts "winner: #{row.inspect} circles=#{circles}"
+      puts "winner: circles=#{circles}"
       return CIRCLE if circles == 3  # "circle" wins
       crosses = number_of(CROSS, row)   
-      puts "winner: #{row.inspect} crosses=#{crosses}"
+      puts "winner: crosses=#{crosses}"
       return CROSS  if crosses == 3
     end
     false
@@ -88,7 +85,7 @@ include TicTacToe
       if (number_of(BLANK, row) == 1) then
         if (number_of(CROSS, row) == 2) then # If I have a win, take it.  
           row.each do |e|
-            return e if self[e] == BLANK
+            return e if session["bs"][e] == BLANK
           end
         end
       end
@@ -97,7 +94,7 @@ include TicTacToe
       if (number_of(BLANK, row) == 1) then
         if (number_of(CIRCLE,row) == 2) then # If he is threatening to win, stop it.
           row.each do |e|
-            return e if self[e] == BLANK
+            return e if session["bs"][e] == BLANK
           end
         end
       end
@@ -120,49 +117,52 @@ include TicTacToe
     # Or make a random move.
     moves[rand(moves.size)]
   end
-end
-
-helpers do
 
   def human_wins?
-    $bs.winner == HUMAN
+    winner == HUMAN
   end
 
   def computer_wins?
-    $bs.winner == COMPUTER
+    winner == COMPUTER
   end
 end
 
-include TicTacToe
+helpers TicTacToe
+
 get %r{^/([abc][123])?$} do |human|
   if human then
     puts "You played: #{human}!"
-    if $bs.legal_moves.include? human
-      $bs[human] = CIRCLE
-      # computer = $bs.legal_moves.sample
-      computer = $bs.smart_move
-      redirect to ('humanwins') if human_wins?
+    puts "session: "
+    pp session
+    if legal_moves.include? human
+      session["bs"][human] = TicTacToe::CIRCLE
+      # computer = session["bs"].legal_moves.sample
+      computer = smart_move
+      redirect to ('/humanwins') if human_wins?
       redirect to('/') unless computer
-      $bs[computer] = CROSS
+      session["bs"][computer] = TicTacToe::CROSS
       puts "I played: #{computer}!"
-      puts "Tablero:  #{$bs.board.inspect}"
-      redirect to ('computerwins') if computer_wins?
+      puts "Tablero:  #{board.inspect}"
+      redirect to ('/computerwins') if computer_wins?
     end
   else
-    puts Board::HORIZONTALS.inspect
-    $bs = Board.new(session)
+    session["bs"] = inicializa()
+    puts "session = "
+    pp session
   end
-  haml :game, :locals => { :b => $bs, :m => ''  }
+  haml :game, :locals => { :b => session["bs"], :m => ''  }
 end
 
 get '/humanwins' do
   begin
+    puts "/humanwins session="
+    pp session
     m = if human_wins? then
           'Human wins'
         else 
           redirect '/'
         end
-    haml :final, :locals => { :b => $bs, :m => m }
+    haml :final, :locals => { :b => session["bs"], :m => m }
   rescue
     redirect '/'
   end
@@ -170,20 +170,22 @@ end
 
 get '/computerwins' do
   begin
+    puts "/computerwins"
+    pp session
     m = if computer_wins? then
           'Computer wins'
         else 
           redirect '/'
         end
-    haml :final, :locals => { :b => $bs, :m => m }
+    haml :final, :locals => { :b => session["bs"], :m => m }
   rescue
     redirect '/'
   end
 end
 
 not_found do
-  $bs = Board.new(session)
-  haml :game, :locals => { :b => $bs, :m => 'Let us start a new game'  }
+  session["bs"] = Board.new(session)
+  haml :game, :locals => { :b => session["bs"], :m => 'Let us start a new game'  }
 end
 
 get '/styles.css' do
