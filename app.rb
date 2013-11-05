@@ -5,14 +5,15 @@ settings.port = ENV['PORT'] || 4567
 enable :sessions
 use Rack::Session::Pool, :expire_after => 2592000
 set :session_secret, 'super secret'
+set :sessions, :domain => 'example.com'
 
-configure :development, :test do
-  set :sessions, :domain => 'example.com'
-end
-
-configure :production do
-  set :sessions, :domain => 'herokuapp.com'
-end
+#configure :development, :test do
+#  set :sessions, :domain => 'example.com'
+#end
+#
+#configure :production do
+#  set :sessions, :domain => 'herokuapp.com'
+#end
 
 module TicTacToe
   HUMAN = CIRCLE = "circle" # human
@@ -141,12 +142,12 @@ get %r{^/([abc][123])?$} do |human|
       BOARD[human] = CIRCLE
       # computer = BOARD.legal_moves.sample
       computer = BOARD.smart_move
-      redirect to ('humanwins') if BOARD.winner == CIRCLE
+      redirect to ('humanwins') if human_wins?
       redirect to('/') unless computer
       BOARD[computer] = CROSS
       puts "I played: #{computer}!"
       puts "Tablero:  #{BOARD.board.inspect}"
-      redirect to ('computerwins') if BOARD.winner == CROSS
+      redirect to ('computerwins') if computer_wins?
     end
   else
     puts Board::HORIZONTALS.inspect
@@ -160,7 +161,7 @@ get '/humanwins' do
     m = if human_wins? then
           'Human wins'
         else 
-          ''
+          redirect '/'
         end
     haml :final, :locals => { :b => BOARD, :m => m }
   rescue
@@ -173,7 +174,7 @@ get '/computerwins' do
     m = if computer_wins? then
           'Computer wins'
         else 
-          ''
+          redirect '/'
         end
     haml :final, :locals => { :b => BOARD, :m => m }
   rescue
