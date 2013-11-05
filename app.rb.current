@@ -1,18 +1,21 @@
 require 'sinatra'
 require 'sass'
-
-settings.port = ENV['PORT'] || 4567
-enable :sessions
 use Rack::Session::Pool, :expire_after => 2592000
-set :session_secret, 'super secret'
 
-configure :development, :test do
-  set :sessions, :domain => 'example.com'
+configure do
+  enable :sessions
+  settings.port = ENV['PORT'] || 3333
+  #set :sessions, :domain => 'example.com'
+  set :session_secret, ENV['SESSION_SECRET'] ||= 'super secret'
 end
 
-configure :production do
-  set :sessions, :domain => 'herokuapp.com'
-end
+#configure :development, :test do
+#  set :sessions, :domain => 'example.com'
+#end
+#
+#configure :production do
+#  set :sessions, :domain => 'herokuapp.com'
+#end
 
 module TicTacToe
   HUMAN = CIRCLE = "circle" # human
@@ -72,10 +75,10 @@ include TicTacToe
   def winner
     ROWS.each do |row|
       circles = number_of(CIRCLE, row)  
-      puts "winner: #{row.inspect} circles=#{circles}"
+      #puts "winner: #{row.inspect} circles=#{circles}"
       return CIRCLE if circles == 3  # "circle" wins
       crosses = number_of(CROSS, row)   
-      puts "winner: #{row.inspect} crosses=#{crosses}"
+      #puts "winner: #{row.inspect} crosses=#{crosses}"
       return CROSS  if crosses == 3
     end
     false
@@ -145,7 +148,7 @@ get %r{^/([abc][123])?$} do |human|
       redirect to('/') unless computer
       BOARD[computer] = CROSS
       puts "I played: #{computer}!"
-      puts "Tablero:  #{BOARD.board.inspect}"
+      puts "Board:  #{BOARD.board.inspect}"
       redirect to ('computerwins') if BOARD.winner == CROSS
     end
   else
@@ -160,7 +163,7 @@ get '/humanwins' do
     m = if human_wins? then
           'Human wins'
         else 
-          ''
+          redirect '/'
         end
     haml :final, :locals => { :b => BOARD, :m => m }
   rescue
@@ -173,7 +176,7 @@ get '/computerwins' do
     m = if computer_wins? then
           'Computer wins'
         else 
-          ''
+          redirect '/'
         end
     haml :final, :locals => { :b => BOARD, :m => m }
   rescue
