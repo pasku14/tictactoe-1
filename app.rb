@@ -5,7 +5,6 @@ settings.port = ENV['PORT'] || 4567
 enable :sessions
 use Rack::Session::Pool, :expire_after => 2592000
 set :session_secret, 'super secret'
-set :sessions, :domain => 'example.com'
 
 #configure :development, :test do
 #  set :sessions, :domain => 'example.com'
@@ -126,11 +125,11 @@ end
 helpers do
 
   def human_wins?
-    BOARD.winner == HUMAN
+    $bs.winner == HUMAN
   end
 
   def computer_wins?
-    BOARD.winner == COMPUTER
+    $bs.winner == COMPUTER
   end
 end
 
@@ -138,22 +137,22 @@ include TicTacToe
 get %r{^/([abc][123])?$} do |human|
   if human then
     puts "You played: #{human}!"
-    if BOARD.legal_moves.include? human
-      BOARD[human] = CIRCLE
-      # computer = BOARD.legal_moves.sample
-      computer = BOARD.smart_move
+    if $bs.legal_moves.include? human
+      $bs[human] = CIRCLE
+      # computer = $bs.legal_moves.sample
+      computer = $bs.smart_move
       redirect to ('humanwins') if human_wins?
       redirect to('/') unless computer
-      BOARD[computer] = CROSS
+      $bs[computer] = CROSS
       puts "I played: #{computer}!"
-      puts "Tablero:  #{BOARD.board.inspect}"
+      puts "Tablero:  #{$bs.board.inspect}"
       redirect to ('computerwins') if computer_wins?
     end
   else
     puts Board::HORIZONTALS.inspect
-    BOARD = Board.new(session)
+    $bs = Board.new(session)
   end
-  haml :game, :locals => { :b => BOARD, :m => ''  }
+  haml :game, :locals => { :b => $bs, :m => ''  }
 end
 
 get '/humanwins' do
@@ -163,7 +162,7 @@ get '/humanwins' do
         else 
           redirect '/'
         end
-    haml :final, :locals => { :b => BOARD, :m => m }
+    haml :final, :locals => { :b => $bs, :m => m }
   rescue
     redirect '/'
   end
@@ -176,15 +175,15 @@ get '/computerwins' do
         else 
           redirect '/'
         end
-    haml :final, :locals => { :b => BOARD, :m => m }
+    haml :final, :locals => { :b => $bs, :m => m }
   rescue
     redirect '/'
   end
 end
 
 not_found do
-  BOARD = Board.new(session)
-  haml :game, :locals => { :b => BOARD, :m => 'Let us start a new game'  }
+  $bs = Board.new(session)
+  haml :game, :locals => { :b => $bs, :m => 'Let us start a new game'  }
 end
 
 get '/styles.css' do
