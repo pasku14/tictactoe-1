@@ -183,7 +183,8 @@ get '/computerwins' do
 end
 
 not_found do
-  redirect '/'
+  BOARD = Board.new(session)
+  haml :game, :locals => { :b => BOARD, :m => 'Let us start a new game'  }
 end
 
 get '/styles.css' do
