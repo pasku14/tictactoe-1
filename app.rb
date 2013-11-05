@@ -7,13 +7,13 @@ enable :sessions
 #use Rack::Session::Pool, :expire_after => 2592000
 #set :session_secret, 'super secret'
 
-configure :development, :test do
-  set :sessions, :domain => 'example.com'
-end
+#configure :development, :test do
+#  set :sessions, :domain => 'example.com'
+#end
 
-configure :production do
-  set :sessions, :domain => 'herokuapp.com'
-end
+#configure :production do
+#  set :sessions, :domain => 'herokuapp.com'
+#end
 
 module TicTacToe
   HUMAN = CIRCLE = "circle" # human
@@ -154,9 +154,9 @@ get %r{^/([abc][123])?$} do |human|
 end
 
 get '/humanwins' do
+  puts "/humanwins session="
+  pp session
   begin
-    puts "/humanwins session="
-    pp session
     m = if human_wins? then
           'Human wins'
         else 
@@ -169,9 +169,9 @@ get '/humanwins' do
 end
 
 get '/computerwins' do
+  puts "/computerwins"
+  pp session
   begin
-    puts "/computerwins"
-    pp session
     m = if computer_wins? then
           'Computer wins'
         else 
@@ -184,7 +184,8 @@ get '/computerwins' do
 end
 
 not_found do
-  session["bs"] = Board.new(session)
+  puts "not found!!!!!!!!!!!"
+  session["bs"] = inicializa(session)
   haml :game, :locals => { :b => session["bs"], :m => 'Let us start a new game'  }
 end
 
