@@ -2,8 +2,8 @@ require 'sinatra'
 require 'sass'
 
 configure do
-  settings.port = ENV['PORT'] || 3333
   enable :sessions
+  settings.port = ENV['PORT'] || 3333
   #set :sessions, :domain => 'example.com'
   use Rack::Session::Pool, :expire_after => 2592000
   set :session_secret, ENV['SESSION_SECRET'] ||= 'super secret'
@@ -46,6 +46,7 @@ include TicTacToe
 
   def board
     Board.board = @session["board"] = Board.new(session) unless @session 
+    Board.board
   end
 
   def self.board 
