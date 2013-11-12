@@ -1,8 +1,9 @@
 $red:   #903;
 $black: #444;
 $white: #fff;
-$ull:   #9900FF;
+$par:   #9900FF;
 $pink:  #F9A7B0;
+$impar: #FFFF00;
 $i: 1;
 $a: 0;
 $b: 3;
@@ -52,27 +53,27 @@ body       {
 
 @for $i from 1 through 3 {
   @if ( (($i+$a) % (2)) == 0 ){ 
-    #a#{$i}:hover {background-color:#64fe2e;}
+    #a#{$i}:hover {background-color:$par;}
   }
   @else {
-    #a#{$i}:hover {background-color:#df013a;}
+    #a#{$i}:hover {background-color:$impar;}
   }
 }
 
 @for $i from 1 through 3 {
   @if ( (($i+$b) % (2)) == 0 ){ 
-    #b#{$i}:hover {background-color:#64fe2e;}
+    #b#{$i}:hover {background-color:$par;}
   }
   @else {
-    #b#{$i}:hover {background-color:#df013a;}
+    #b#{$i}:hover {background-color:$impar;}
   }
 }
 @for $i from 1 through 3 {
   @if ( (($i+$c) % (2)) == 0 ){ 
-    #c#{$i}:hover {background-color:#64fe2e;}
+    #c#{$i}:hover {background-color:$par;}
   }
   @else {
-    #c#{$i}:hover {background-color:#df013a;}
+    #c#{$i}:hover {background-color:$impar;}
   }
 }
 
