@@ -1,3 +1,17 @@
+.cabecera
+  -if (!juego)
+    %form{:action=>"/",:method=>"post"}
+      Introduce tu nombre y entra en nuestro Ranking! 
+      %input{:type=>"text",:name=>"juego[nombre]",:placeholder=>"user"}
+      %input{:type=>"hidden",:name=>"juego[p_ganadas]",:value=>"0"}
+      %input{:type=>"hidden",:name=>"juego[jugadas]",:value=>"0"}
+      %input{:type=>"submit",:value=>"enviar"}
+  -else
+    %form{:action=>"/",:method=>"post"}
+      Bienvenido, #{user}!
+      %input{:type=>"hidden",:value=>"1",:name=>"logout"}
+      %input{:type=>"submit",:value=>"logout"}
+
 .screen
   .gameboard
     - HORIZONTALS.each do |row| 
