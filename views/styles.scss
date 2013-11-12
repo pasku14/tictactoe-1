@@ -1,9 +1,11 @@
 $red:   #903;
 $black: #444;
 $white: #fff;
-$ull:   #9900FF;
+$ull:   #088A08;
 $pink:  #F9A7B0;
-
+$a: 0;
+$b: 3;
+$c: 6;
 $main-font: Helvetica, Arial, sans-serif;
 $message-font: 22px/1;
 
@@ -42,10 +44,36 @@ body       {
              padding: $cell-padding; 
              &:hover {
                color: black ;
-               background-color: $ull;
              }
              float: left; 
            }
+
+
+@for $i from 1 through 3 {
+  @if ( (($i+$a) % (2)) == 0 ){ 
+    #a#{$i}:hover {background-color:#FFFF00;}
+  }
+  @else {
+    #a#{$i}:hover {background-color:#01DF01;}
+  }
+}
+
+@for $i from 1 through 3 {
+  @if ( (($i+$b) % (2)) == 0 ){ 
+    #b#{$i}:hover {background-color:#FFFF00;}
+  }
+  @else {
+    #b#{$i}:hover {background-color:#01DF01;}
+  }
+}
+@for $i from 1 through 3 {
+  @if ( (($i+$c) % (2)) == 0 ){ 
+    #c#{$i}:hover {background-color:#FFFF00;}
+  }
+  @else {
+    #c#{$i}:hover {background-color:#01DF01;}
+  }
+}
 
 @mixin game-piece($image) {
   background: url($image)  no-repeat; background-size: cover; 

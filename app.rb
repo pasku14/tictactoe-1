@@ -1,11 +1,22 @@
 require 'sinatra'
 require 'sass'
 require 'pp'
+require 'haml'
+require './juego.rb'
 
 settings.port = ENV['PORT'] || 4567
-enable :sessions
-#use Rack::Session::Pool, :expire_after => 2592000
-#set :session_secret, 'super secret'
+#enable :sessions
+
+use Rack::Session::Pool, :expire_after => 2592000
+set :session_secret, 'super secret'
+
+configure :development do
+  DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/development.db")
+end
+
+configure :production do
+  DataMapper.setup(:default, ENV['DATABASE_URL'])
+end
 
 #configure :development, :test do
 #  set :sessions, :domain => 'example.com'
@@ -37,6 +48,11 @@ module TicTacToe
     end
     @board
   end
+
+  def juego
+    session["juego"]
+  end
+
 
   def board
     session["bs"]
@@ -158,6 +174,18 @@ get '/humanwins' do
   pp session
   begin
     m = if human_wins? then
+        if (session["usuario"] != nil)
+          usu_juego = Juego.first(:nombre => session["juego"])
+          contador = usu_juego.p_ganadas +1 
+          usu_juego.p_ganadas = contador
+
+          contador = usu_juego.jugadas + 1
+          usu_juego.jugadas = contador
+
+          usu_juego.save
+          pp usu_juego
+
+          end
           'Human wins'
         else 
           redirect '/'
@@ -173,6 +201,14 @@ get '/computerwins' do
   pp session
   begin
     m = if computer_wins? then
+          if (session["usuario"] != nil)
+          usu_juego = Juego.first(:nombre => session["juego"])
+          contador = usu_juego.jugadas + 1
+          usu_juego.jugadas = contador
+          usu_juego.save
+          pp usu_juego
+
+          end
           'Computer wins'
         else 
           redirect '/'
@@ -183,6 +219,11 @@ get '/computerwins' do
   end
 end
 
+post '/' do
+
+end
+
+
 not_found do
   puts "not found!!!!!!!!!!!"
   session["bs"] = inicializa()
@@ -192,3 +233,5 @@ end
 get '/styles.css' do
   scss :styles
 end
+
+

@@ -21,8 +21,34 @@ body {
   padding: 45.24887px;
   float: left; }
   .cell:hover {
-    color: black;
-    background-color: #9900ff; }
+    color: black; }
+
+#a1:hover {
+  background-color: #01DF01; }
+
+#a2:hover {
+  background-color: #FFFF00; }
+
+#a3:hover {
+  background-color: #01DF01; }
+
+#b1:hover {
+  background-color: #FFFF00; }
+
+#b2:hover {
+  background-color: #01DF01; }
+
+#b3:hover {
+  background-color: #FFFF00; }
+
+#c1:hover {
+  background-color: #01DF01; }
+
+#c2:hover {
+  background-color: #FFFF00; }
+
+#c3:hover {
+  background-color: #01DF01; }
 
 .cross {
   background: url("/images/cross.gif") no-repeat;
