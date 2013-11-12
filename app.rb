@@ -19,6 +19,8 @@ configure :production do
   DataMapper.setup(:default, ENV['DATABASE_URL'])
 end
 
+DataMapper.auto_upgrade!
+
 #configure :development, :test do
 #  set :sessions, :domain => 'example.com'
 #end
@@ -175,14 +177,12 @@ get '/humanwins' do
   pp session
   begin
     m = if human_wins? then
-        if (session["usuario"] != nil)
+        if (session["juego"] != nil)
           usu_juego = Juego.first(:nombre => session["juego"])
           contador = usu_juego.p_ganadas +1 
           usu_juego.p_ganadas = contador
-
           contador = usu_juego.jugadas + 1
           usu_juego.jugadas = contador
-
           usu_juego.save
           pp usu_juego
 
@@ -202,7 +202,7 @@ get '/computerwins' do
   pp session
   begin
     m = if computer_wins? then
-          if (session["usuario"] != nil)
+          if (session["juego"] != nil)
           usu_juego = Juego.first(:nombre => session["juego"])
           contador = usu_juego.jugadas + 1
           usu_juego.jugadas = contador
@@ -221,7 +221,28 @@ get '/computerwins' do
 end
 
 post '/' do
-
+  if params[:logout]
+    @juego = nil
+    session["juego"] = nil
+    session.clear
+  else
+    nick = params[:juego]
+    nick = nick["nombre"]
+    u = Juego.first(:nombre => "#{nick}")
+    if u == nil
+      usuario = Juego.create(params[:juego])
+      usuario.save
+      Aux = params[:juego]
+      @juego = Aux["nombre"]
+      session["juego"] = @juego
+    else
+      p "Ya existe un usuario con ese nick!"
+      @juego = nil
+      session["juego"] = nil
+      session.clear
+    end
+  end
+    redirect '/'
 end
 
 

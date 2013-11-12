@@ -11,6 +11,9 @@
       Bienvenido, #{user}!
       %input{:type=>"hidden",:value=>"1",:name=>"logout"}
       %input{:type=>"submit",:value=>"logout"}
+.marcador
+  %a{:href=>"/juego"}
+    Mostrar Ranking!
 
 .gameboard
   - HORIZONTALS.each do |row| 
