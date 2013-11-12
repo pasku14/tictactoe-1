@@ -24,31 +24,32 @@ body {
     color: black; }
 
 #a1:hover {
-  background-color: #01DF01; }
+  background-color: yellow; }
 
 #a2:hover {
-  background-color: #FFFF00; }
+  background-color: #9900ff; }
 
 #a3:hover {
-  background-color: #01DF01; }
+  background-color: yellow; }
 
 #b1:hover {
-  background-color: #FFFF00; }
+  background-color: #9900ff; }
 
 #b2:hover {
-  background-color: #01DF01; }
+  background-color: yellow; }
 
 #b3:hover {
-  background-color: #FFFF00; }
+  background-color: #9900ff; }
 
 #c1:hover {
-  background-color: #01DF01; }
+  background-color: yellow; }
 
 #c2:hover {
-  background-color: #FFFF00; }
+  background-color: #9900ff; }
 
 #c3:hover {
-  background-color: #01DF01; }
+  background-color: yellow; }
+
 
 .cross {
   background: url("/images/cross.gif") no-repeat;

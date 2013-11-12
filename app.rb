@@ -4,6 +4,7 @@ require 'pp'
 require 'haml'
 require './juego.rb'
 
+
 settings.port = ENV['PORT'] || 4567
 #enable :sessions
 
