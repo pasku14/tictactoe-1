@@ -59,7 +59,7 @@ body {
   background-size: cover; }
 
 .base-font, .message {
-  color: #f9a7b0;
+  color: #444444;
   font: 22px Helvetica, Arial, sans-serif; }
 
 .message {
@@ -67,7 +67,10 @@ body {
   background-color: transparent; }
 
 .cabecera {
-  text-align: left;
-  background-color: #81BEF7;
-  color: black;
+  text-align: center;
+  font: Helvetica, Arial, sans-serif;
+  color: #3A01DF;
   margin-right: 30px; }
+
+.marcador {
+  margin-top: 13.5em; }

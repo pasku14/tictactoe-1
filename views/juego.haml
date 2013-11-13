@@ -15,3 +15,6 @@
 					#{juego.p_ganadas}
 				%td        
 					#{juego.jugadas}
+.volver
+	%form{:action=>"/",:method=>"post"}
+		%input{:type=>"submit", :value=>"Atrás"}

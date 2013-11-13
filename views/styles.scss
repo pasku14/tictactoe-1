@@ -85,7 +85,7 @@ body       {
 .cross     { @include game-piece($cross); }
 .circle    { @include game-piece($circle); }
 
-.base-font { color: $pink; font: $message-font $main-font; }
+.base-font { color: $black; font: $message-font $main-font; }
 
 .message   { 
              @extend .base-font;
@@ -93,10 +93,13 @@ body       {
              background-color:transparent;
            }
 
-
 .cabecera {
-  text-align: left;
-  background-color: #81BEF7;
-  color: black;
+  text-align: center;
+  font: $main-font;
+  color: #3A01DF;
   margin-right: 30px;
+}
+
+.marcador{
+  margin-top: 13.5em;
 }
