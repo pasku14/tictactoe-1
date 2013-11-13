@@ -1,14 +1,15 @@
+- puts "pepepepepepepe"
 .cabecera
   -if (!juego)
-    %form{:action=>"/",:method=>"post"}
+    %form{:action=>"/introducir",:method=>"post"}
       Introduce tu nombre y entra en nuestro Ranking! 
-      %input{:type=>"text",:name=>"juego[nombre]",:placeholder=>"user"}
+      %input{:type=>"text",:name=>"juego[nombre]",:placeholder=>"Introduce nombre"}
       %input{:type=>"hidden",:name=>"juego[p_ganadas]",:value=>"0"}
       %input{:type=>"hidden",:name=>"juego[jugadas]",:value=>"0"}
       %input{:type=>"submit",:value=>"enviar"}
   -else
-    %form{:action=>"/",:method=>"post"}
-      Bienvenido, #{user}!
+    %form{:action=>"/introducir",:method=>"post"}
+      Bienvenido, #{juego}!
       %input{:type=>"hidden",:value=>"1",:name=>"logout"}
       %input{:type=>"submit",:value=>"logout"}
 .marcador
@@ -16,6 +17,7 @@
     Mostrar Ranking!
 
 .gameboard
+  - puts "pepepepepepepe"
   - HORIZONTALS.each do |row| 
     .gamerow
       - row.each do |p|

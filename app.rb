@@ -173,19 +173,17 @@ get %r{^/([abc][123])?$} do |human|
 end
 
 get '/humanwins' do
-  puts "/humanwins session="
+  puts "/humanwins"
   pp session
   begin
     m = if human_wins? then
-        if (session["juego"] != nil)
-          usu_juego = Juego.first(:nombre => session["juego"])
-          contador = usu_juego.p_ganadas +1 
-          usu_juego.p_ganadas = contador
-          contador = usu_juego.jugadas + 1
-          usu_juego.jugadas = contador
-          usu_juego.save
-          pp usu_juego
-
+          if (session["juego"] != nil)
+            usu_juego = Juego.first(:nombre => session["juego"])
+            usu_juego.p_ganadas = usu_juego.p_ganadas + 1
+            contador = usu_juego.jugadas + 1
+            usu_juego.jugadas = contador
+            usu_juego.save
+            pp usu_juego
           end
           'Human wins'
         else 
@@ -193,6 +191,7 @@ get '/humanwins' do
         end
     haml :final, :locals => { :b => board, :m => m }
   rescue
+    puts "lola!"
     redirect '/'
   end
 end
@@ -203,12 +202,11 @@ get '/computerwins' do
   begin
     m = if computer_wins? then
           if (session["juego"] != nil)
-          usu_juego = Juego.first(:nombre => session["juego"])
-          contador = usu_juego.jugadas + 1
-          usu_juego.jugadas = contador
-          usu_juego.save
-          pp usu_juego
-
+            usu_juego = Juego.first(:nombre => session["juego"])
+            contador = usu_juego.jugadas + 1
+            usu_juego.jugadas = contador
+            usu_juego.save
+            pp usu_juego
           end
           'Computer wins'
         else 
@@ -216,11 +214,12 @@ get '/computerwins' do
         end
     haml :final, :locals => { :b => board, :m => m }
   rescue
+    puts "lola!"
     redirect '/'
   end
 end
 
-post '/' do
+post '/introducir' do
   if params[:logout]
     @juego = nil
     session["juego"] = nil
@@ -235,6 +234,7 @@ post '/' do
       Aux = params[:juego]
       @juego = Aux["nombre"]
       session["juego"] = @juego
+      puts "AKIIII  #{session["juego"]}"
     else
       p "Ya existe un usuario con ese nick!"
       @juego = nil
