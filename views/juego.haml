@@ -1,7 +1,10 @@
+.volver
+	%form{:action=>"/",:method=>"post"}
+		%input{:type=>"submit", :value=>"Atrás"}
 .message 
 	%table
 		%tr
-			%th Tres en raya
+			%th Ranking Tres en raya
 		%tr
 			%th Usuario
 			%th Ganadas
@@ -15,6 +18,3 @@
 					#{juego.p_ganadas}
 				%td        
 					#{juego.jugadas}
-.volver
-	%form{:action=>"/",:method=>"post"}
-		%input{:type=>"submit", :value=>"Atrás"}
