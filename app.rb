@@ -144,6 +144,10 @@ module TicTacToe
   def computer_wins?
     winner == COMPUTER
   end
+
+  def tie?
+    ((winner != COMPUTER) && (winner != HUMAN))
+  end
 end
 
 helpers TicTacToe
@@ -169,7 +173,6 @@ get %r{^/([abc][123])?$} do |human|
       puts "I played: #{computer}!"
       puts "Tablero:  #{board.inspect}"
       return '/computerwins' if computer_wins?
-      resultado = computer
     end
   else
     session["bs"] = inicializa()
@@ -202,6 +205,32 @@ get '/humanwins' do
     haml :final, :locals => { :b => board, :m => m }
   rescue
     puts "lola!"
+    redirect '/'
+  end
+end
+
+get '/tie' do
+  puts "/tie session="
+  begin
+    m = if tie? then
+          if (session["juego"] != nil)
+          usu_juego = Juego.first(:nombre => session["juego"])
+          
+          usu_juego.p_empatadas = usu_juego.p_empatadas + 1
+          usu_juego.jugadas = usu_juego.jugadas + 1
+          usu_juego.save
+          pp usu_juego
+
+          end
+          puts "tietie"
+          'TIE'
+        else 
+          puts "tieeeee"
+          redirect '/'
+        end
+    haml :final, :locals => { :b => board, :m => m }
+  rescue
+    puts "lolaa_tie"
     redirect '/'
   end
 end
