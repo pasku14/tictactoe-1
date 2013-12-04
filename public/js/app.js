@@ -1,7 +1,8 @@
-/*
-$(function() {
+$(document).ready(function(){
+	alert("Hola");
   $(".cell").click(function(e) {
-    $.get(e.srcElement.id);
+    alert("PEPE");
   });
 });
-*/
+
+   
